@@ -14,5 +14,8 @@ python manage.py migrate
 # Populate demo data
 python manage.py populate_demo_data
 
+# Add more cars and drivers
+python manage.py add_more_cars_drivers
+
 # Assign sample images to cars and drivers
 python manage.py add_sample_images

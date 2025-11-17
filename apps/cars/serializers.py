@@ -8,6 +8,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class DriverSerializer(serializers.ModelSerializer):
+    profile_photo = serializers.ImageField(use_url=True, read_only=True)
+    
     class Meta:
         model = Driver
         fields = ['id', 'name', 'phone', 'experience', 'license_number', 'profile_photo']
@@ -18,6 +20,7 @@ class CarSerializer(serializers.ModelSerializer):
     car_type_name = serializers.SerializerMethodField()
     driver_name = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
+    car_image = serializers.ImageField(use_url=True, read_only=True)
 
     class Meta:
         model = Car
