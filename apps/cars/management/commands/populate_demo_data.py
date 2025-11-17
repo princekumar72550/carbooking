@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from apps.cars.models import Category, Driver, Car
 from django.contrib.auth.models import User
+import random
+import os
 
 class Command(BaseCommand):
     help = 'Populate database with demo data'
