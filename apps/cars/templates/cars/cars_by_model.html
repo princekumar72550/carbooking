@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ car_model.name }} Cars - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-4">{{ car_model.name }} Cars</h1>
+            <p class="text-center text-muted lead">Browse all {{ car_model.name }} cars available for booking</p>
+        </div>
+    </div>
+    
+    <!-- Back to Models Button -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{% url 'car_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-1"></i> Back to All Car Models
+            </a>
+        </div>
+    </div>
+    
+    <!-- Car Type Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <button class="btn btn-primary" onclick="filterByType('All')">
+                    <i class="bi bi-collection me-1"></i> All Types
+                </button>
+                {% for car_type in car_types %}
+                {% if car_type.name != 'Both' %}
+                <button class="btn btn-outline-primary" onclick="filterByType('{{ car_type.name }}')">
+                    {% if car_type.name == 'AC' %}
+                    <i class="bi bi-wind me-1"></i>
+                    {% elif car_type.name == 'Non-AC' %}
+                    <i class="bi bi-thermometer-snow me-1"></i>
+                    {% else %}
+                    <i class="bi bi-tag me-1"></i>
+                    {% endif %}
+                    {{ car_type.name }}
+                </button>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cars Display -->
+    <div id="car-listings" class="row g-4">
+        {% if cars %}
+        {% for car in cars %}
+        <div class="col-lg-4 col-md-6" data-car-type="{{ car.car_type.name }}" data-car-id="{{ car.id }}">
+            <div class="card h-100 border-0 shadow-sm">
+                {% if car.car_image %}
+                <img src="{{ car.car_image.url }}" class="card-img-top" alt="{{ car.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="bi bi-car-front-fill text-muted" style="font-size: 4rem;"></i>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ car.name }}</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        <i class="bi bi-tag-fill me-1"></i> {{ car.car_model.name }} - {{ car.car_type.name }}<br>
+                        {% if car.car_type.name == 'Both' %}
+                            <span class="ac-price" style="display: none;">
+                                {% if car.ac_price_per_km %}
+                                <i class="bi bi-wind me-1"></i> AC: ₹{{ car.ac_price_per_km }} per km<br>
+                                {% endif %}
+                            </span>
+                            <span class="non-ac-price" style="display: none;">
+                                {% if car.non_ac_price_per_km %}
+                                <i class="bi bi-thermometer-snow me-1"></i> Non-AC: ₹{{ car.non_ac_price_per_km }} per km<br>
+                                {% endif %}
+                            </span>
+                            <span class="both-price">
+                                {% if car.ac_price_per_km %}
+                                <i class="bi bi-wind me-1"></i> AC: ₹{{ car.ac_price_per_km }} per km<br>
+                                {% endif %}
+                                {% if car.non_ac_price_per_km %}
+                                <i class="bi bi-thermometer-snow me-1"></i> Non-AC: ₹{{ car.non_ac_price_per_km }} per km<br>
+                                {% endif %}
+                            </span>
+                        {% else %}
+                        <i class="bi bi-currency-rupee me-1"></i> {{ car.price_per_km }} per km<br>
+                        {% endif %}
+                        <i class="bi bi-person-fill me-1"></i> {{ car.driver.name }}
+                    </p>
+                    <div class="mt-auto">
+                        {% if car.is_available %}
+                        <span class="badge bg-success mb-2">Available</span>
+                        {% else %}
+                        <span class="badge bg-danger mb-2">Not Available</span>
+                        {% endif %}
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'car_detail' car.id %}" class="btn btn-primary">View Details</a>
+                            {% if car.is_available %}
+                            <button class="btn btn-outline-success add-to-cart-btn" onclick="addToCart({{ car.id }}, '{{ car.name|escapejs }}', '{{ car.car_type.name }}', '{% if car.car_image %}{{ car.car_image.url }}{% else %}/media/cars/download.jpg{% endif %}', {% if car.car_type.name == 'Both' %}{% if car.ac_price_per_km %}{{ car.ac_price_per_km }}{% else %}0{% endif %}{% else %}{% if car.price_per_km %}{{ car.price_per_km }}{% else %}0{% endif %}{% endif %})">
+                                <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center my-5">
+            <i class="bi bi-car-front" style="font-size: 4rem; color: #ccc;"></i>
+            <h3 class="mt-3">No cars available for this model</h3>
+            <p class="text-muted">Please check back later or explore other models</p>
+            <a href="{% url 'car_list' %}" class="btn btn-primary mt-3">
+                <i class="bi bi-collection me-1"></i> Browse Other Models
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Filter cars by type
+function filterByType(type) {
+    const carCards = document.querySelectorAll('#car-listings > [data-car-type]');
+    let visibleCount = 0;
+    
+    carCards.forEach(card => {
+        if (type === 'All') {
+            card.style.display = 'block';
+            // Show both prices for Both type cars in All view
+            card.querySelectorAll('.ac-price, .non-ac-price').forEach(el => el.style.display = 'none');
+            card.querySelectorAll('.both-price').forEach(el => el.style.display = 'inline');
+            visibleCount++;
+        } else {
+            const carType = card.getAttribute('data-car-type');
+            if (type === 'AC') {
+                // For AC filter, show AC cars and Both cars
+                if (carType === 'AC' || carType === 'Both') {
+                    card.style.display = 'block';
+                    visibleCount++;
+                    // For Both cars, show only AC price
+                    if (carType === 'Both') {
+                        card.querySelectorAll('.both-price, .non-ac-price').forEach(el => el.style.display = 'none');
+                        card.querySelectorAll('.ac-price').forEach(el => el.style.display = 'inline');
+                    }
+                } else {
+                    card.style.display = 'none';
+                }
+            } else if (type === 'Non-AC') {
+                // For Non-AC filter, show Non-AC cars and Both cars
+                if (carType === 'Non-AC' || carType === 'Both') {
+                    card.style.display = 'block';
+                    visibleCount++;
+                    // For Both cars, show only Non-AC price
+                    if (carType === 'Both') {
+                        card.querySelectorAll('.both-price, .ac-price').forEach(el => el.style.display = 'none');
+                        card.querySelectorAll('.non-ac-price').forEach(el => el.style.display = 'inline');
+                    }
+                } else {
+                    card.style.display = 'none';
+                }
+            } else {
+                // For other types, match exactly
+                if (carType && carType.toLowerCase().includes(type.toLowerCase())) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        }
+    });
+    
+    // Update active button state
+    document.querySelectorAll('.btn-primary, .btn-outline-primary').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline-primary');
+    });
+    
+    event.target.classList.remove('btn-outline-primary');
+    event.target.classList.add('btn-primary');
+}
+</script>
+
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        border-radius: 8px;
+        padding: 8px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}Book a Car - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Book Your Cars</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="booking-form">
+                        <!-- Cart Items Section -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Selected Cars</h5>
+                            <div id="selected-cars-container">
+                                <!-- Cart items will be loaded here via JavaScript -->
+                                <div class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading your selected cars...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pickup-location" class="form-label">Pickup Location</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    <input type="text" class="form-control" id="pickup-location" name="pickup_location" placeholder="Enter pickup location" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="drop-location" class="form-label">Drop Location</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    <input type="text" class="form-control" id="drop-location" name="drop_location" placeholder="Enter drop location" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pickup-date" class="form-label">Pickup Date & Time</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                                    <input type="datetime-local" class="form-control" id="pickup-date" name="pickup_date" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="drop-date" class="form-label">Drop Date & Time</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                                    <input type="datetime-local" class="form-control" id="drop-date" name="drop_date" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="total-price" class="form-label">Total Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="text" class="form-control" id="total-price" name="total_price" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-calendar-check me-2"></i>Confirm Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Booking Information</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <small class="text-muted">Your selected cars from the cart are automatically populated</small>
+                        </li>
+                        <li class="list-group-item">
+                            <small class="text-muted">Enter accurate pickup and drop locations</small>
+                        </li>
+                        <li class="list-group-item">
+                            <small class="text-muted">Choose appropriate dates and times for your journey</small>
+                        </li>
+                        <li class="list-group-item">
+                            <small class="text-muted">Total price will be calculated automatically</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-check me-2"></i>Secure Booking</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="card-text">
+                        Your booking is secured with our system. You'll receive instant confirmation via email.
+                    </p>
+                    <div class="d-flex justify-content-center">
+                        <i class="bi bi-shield-lock text-success" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load and display cart items in the booking form
+document.addEventListener('DOMContentLoaded', function() {
+    // Load cart from localStorage
+    loadCartFromStorage();
+    
+    // Display cart items
+    displayCartItemsInBookingForm();
+    
+    // Set minimum date for pickup to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('pickup-date').min = today;
+    
+    // Set up date validation
+    document.getElementById('pickup-date').addEventListener('change', function() {
+        const pickupDate = new Date(this.value);
+        const dropDateInput = document.getElementById('drop-date');
+        if (dropDateInput.value) {
+            const dropDate = new Date(dropDateInput.value);
+            if (dropDate < pickupDate) {
+                dropDateInput.setCustomValidity('Drop date must be after pickup date');
+            } else {
+                dropDateInput.setCustomValidity('');
+            }
+        }
+    });
+    
+    document.getElementById('drop-date').addEventListener('change', function() {
+        const dropDate = new Date(this.value);
+        const pickupDateInput = document.getElementById('pickup-date');
+        if (pickupDateInput.value) {
+            const pickupDate = new Date(pickupDateInput.value);
+            if (dropDate < pickupDate) {
+                this.setCustomValidity('Drop date must be after pickup date');
+            } else {
+                this.setCustomValidity('');
+            }
+        }
+    });
+    
+    // Set up location change listeners for distance calculation
+    const pickupLocation = document.getElementById('pickup-location');
+    const dropLocation = document.getElementById('drop-location');
+    
+    if (pickupLocation && dropLocation) {
+        pickupLocation.addEventListener('blur', calculateDistanceAndPrice);
+        dropLocation.addEventListener('blur', calculateDistanceAndPrice);
+    }
+});
+
+// Display cart items in the booking form
+function displayCartItemsInBookingForm() {
+    const container = document.getElementById('selected-cars-container');
+    
+    if (!container) return;
+    
+    // Get cart from global variable (defined in base template)
+    if (typeof shoppingCart === 'undefined' || shoppingCart.length === 0) {
+        // Show empty cart message
+        container.innerHTML = `
+            <div class="alert alert-warning text-center">
+                <i class="bi bi-cart-x me-2"></i>
+                Your cart is empty. Please <a href="{% url 'car_list' %}" class="alert-link">browse cars</a> and add them to your cart first.
+            </div>
+        `;
+        return;
+    }
+    
+    // Display cart items
+    let cartHtml = '<div class="row">';
+    
+    shoppingCart.forEach((item, index) => {
+        // Use the actual price per km from the cart item
+        const pricePerKm = item.price_per_km || 15.0; // Default to 15.0 if not available
+        
+        cartHtml += `
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            ${item.image ? 
+                                `<img src="${item.image}" alt="${item.name}" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;">` :
+                                `<div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                    <i class="bi bi-car-front text-muted" style="font-size: 2rem;"></i>
+                                </div>`
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h6 class="card-title mb-1">${item.name}</h6>
+                                <p class="card-text mb-1">
+                                    <small class="text-muted">${item.type}</small>
+                                </p>
+                                <input type="hidden" name="car_ids" value="${item.id}">
+                                <!-- Hidden input to store car price per km -->
+                                <input type="hidden" class="car-price-per-km" value="${pricePerKm}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    cartHtml += '</div>';
+    
+    container.innerHTML = cartHtml;
+    
+    // Initialize total price to 0
+    document.getElementById('total-price').value = '0.00';
+}
+
+// Calculate distance and price based on locations
+function calculateDistanceAndPrice() {
+    const pickupLocation = document.getElementById('pickup-location').value;
+    const dropLocation = document.getElementById('drop-location').value;
+    
+    // Check if both locations are provided
+    if (!pickupLocation || !dropLocation) {
+        return;
+    }
+    
+    // Show loading indicator
+    const priceInput = document.getElementById('total-price');
+    priceInput.value = 'Calculating...';
+    
+    // For demonstration purposes, we'll use a mock distance calculation
+    // In a real application, you would use a service like Google Maps Distance Matrix API
+    setTimeout(() => {
+        // Mock distance calculation (in kilometers)
+        const distance = calculateMockDistance(pickupLocation, dropLocation);
+        
+        // Calculate total price based on distance and car prices
+        const totalPrice = calculateTotalPrice(distance);
+        
+        // Update the price input
+        priceInput.value = totalPrice.toFixed(2);
+        
+        // Store distance for reference
+        document.getElementById('booking-form').setAttribute('data-distance', distance);
+        
+        // Show distance information
+        showDistanceInfo(distance);
+    }, 500);
+}
+
+// Mock distance calculation function
+function calculateMockDistance(pickup, drop) {
+    // This is a simplified mock function
+    // In a real application, you would use a geocoding service and distance matrix API
+    
+    // For demonstration, we'll return a random distance between 10 and 500 km
+    // In a real app, you would calculate the actual distance between the locations
+    return Math.floor(Math.random() * 490) + 10;
+}
+
+// Calculate total price based on distance and car prices
+function calculateTotalPrice(distance) {
+    if (!distance || distance <= 0) {
+        return 0;
+    }
+    
+    // Get all car price per km values
+    const priceInputs = document.querySelectorAll('.car-price-per-km');
+    let totalPrice = 0;
+    
+    // Calculate total price for all cars
+    priceInputs.forEach(input => {
+        const pricePerKm = parseFloat(input.value) || 0;
+        totalPrice += distance * pricePerKm;
+    });
+    
+    return totalPrice;
+}
+
+// Show distance information
+function showDistanceInfo(distance) {
+    // Create or update distance info element
+    let distanceInfo = document.getElementById('distance-info');
+    if (!distanceInfo) {
+        distanceInfo = document.createElement('div');
+        distanceInfo.id = 'distance-info';
+        distanceInfo.className = 'alert alert-info mt-3';
+        document.getElementById('booking-form').insertBefore(distanceInfo, document.getElementById('total-price').closest('.mb-3'));
+    }
+    
+    distanceInfo.innerHTML = `
+        <i class="bi bi-info-circle me-2"></i>
+        Estimated distance: <strong>${distance.toFixed(2)} km</strong>
+    `;
+}
+</script>
+{% endblock %}

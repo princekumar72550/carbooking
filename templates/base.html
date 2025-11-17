@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Car Booking System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(1000px at 20% 0%, #0b0f19 0%, #0a0e17 25%, #090d16 50%, #070b13 75%, #060910 100%);
+            color: #e6e6e6;
+        }
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background: linear-gradient(135deg, rgba(12, 17, 27, 0.95) 0%, rgba(14, 20, 32, 0.95) 50%, rgba(16, 24, 38, 0.95) 100%);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            padding: 1rem 0;
+            backdrop-filter: saturate(180%) blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            color: #e6e6e6 !important;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.25);
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .navbar-brand i {
+            margin-right: 8px;
+            color: #00d4ff;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-radius: 10px;
+            padding: 8px 15px;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: #00d4ff !important;
+            background-color: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.25);
+            box-shadow: 0 6px 18px rgba(0, 212, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            background-color: rgba(0, 212, 255, 0.12);
+            color: #00d4ff !important;
+            border-color: rgba(0, 212, 255, 0.35);
+            box-shadow: inset 0 0 12px rgba(0, 212, 255, 0.25);
+        }
+
+        /* Cart Icon Styling */
+        .cart-icon {
+            position: relative;
+            color: #e6e6e6;
+            font-size: 1.5rem;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 6px rgba(0, 212, 255, 0.2);
+        }
+
+        .cart-icon:hover {
+            color: #00d4ff;
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #00d4ff 0%, #6e8efb 100%);
+            color: #0b0f19;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Dropdown Menu Styling */
+        .dropdown-menu {
+            background-color: rgba(15, 25, 40, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            padding: 8px 0;
+            margin-top: 10px;
+        }
+
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.15) 0%, rgba(110, 142, 251, 0.15) 100%);
+            color: #00d4ff;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 5px 0;
+        }
+
+        .dropdown-toggle::after {
+            margin-left: 8px;
+            border-width: 4px;
+        }
+
+        /* Main Content */
+        main {
+            min-height: calc(100vh - 200px);
+            padding: 40px 0;
+        }
+
+        /* Footer Styling */
+        .footer-custom {
+            background: linear-gradient(135deg, rgba(12, 17, 27, 0.95) 0%, rgba(14, 20, 32, 0.95) 50%, rgba(16, 24, 38, 0.95) 100%);
+            color: #e6e6e6;
+            margin-top: 80px;
+            padding: 60px 0 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-section h5 {
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #6e8efb);
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-section ul li a:hover {
+            color: #ffc107;
+            padding-left: 5px;
+        }
+
+        .footer-section ul li a i {
+            margin-right: 8px;
+            color: #00d4ff;
+            font-size: 0.8rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e6e6e6;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links a:hover {
+            background: linear-gradient(135deg, #00d4ff 0%, #6e8efb 100%);
+            color: #0b0f19;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.35);
+        }
+
+        .footer-bottom {
+            background-color: rgba(0, 0, 0, 0.25);
+            padding: 25px 0;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .footer-bottom p {
+            margin: 8px 0;
+        }
+
+        .footer-bottom a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            
+            .navbar-nav {
+                text-align: center;
+                margin-top: 15px;
+            }
+            
+            .navbar-nav .nav-item {
+                margin-bottom: 0.5rem;
+            }
+            
+            .nav-link {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-car-front-fill"></i> Car Booking
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-fill"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cars/">
+                            <i class="bi bi-car-front"></i> Cars
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav align-items-center">
+                    <!-- Cart Icon -->
+                    <li class="nav-item">
+                        <a href="/cart/" class="cart-icon">
+                            <i class="bi bi-cart-fill"></i>
+                            <span class="cart-count" id="header-cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        {% if user.is_authenticated %}
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> Profile
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/profile/"><i class="bi bi-person-fill"></i> View Profile</a></li>
+                                <li><a class="dropdown-item" href="/profile/edit/"><i class="bi bi-pencil-square"></i> Edit Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/my-bookings/"><i class="bi bi-calendar-check"></i> My Bookings</a></li>
+                                <li><a class="dropdown-item" href="/my-bookings/history/"><i class="bi bi-clock-history"></i> Booking History</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/logout/"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        {% else %}
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> Account
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/login/"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                                <li><a class="dropdown-item" href="/register/"><i class="bi bi-person-plus"></i> Register</a></li>
+                            </ul>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="footer-content">
+                <!-- About Section -->
+                <div class="footer-section">
+                    <h5><i class="bi bi-car-front-fill"></i> About Us</h5>
+                    <p>
+                        We provide the best car booking experience with a wide range of vehicles and affordable prices. Our service ensures comfort, safety, and reliability for all your travel needs.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h5><i class="bi bi-link-45deg"></i> Quick Links</h5>
+                    <ul>
+                        <li><a href="/"><i class="bi bi-chevron-right"></i> Home</a></li>
+                        <li><a href="/cars/"><i class="bi bi-chevron-right"></i> Cars</a></li>
+                        <li><a href="/my-bookings/"><i class="bi bi-chevron-right"></i> My Bookings</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i> Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Services -->
+                <div class="footer-section">
+                    <h5><i class="bi bi-gear-fill"></i> Services</h5>
+                    <ul>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i> Car Rental</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i> Long Term Rental</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i> Airport Transfer</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i> 24/7 Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-section">
+                    <h5><i class="bi bi-telephone-fill"></i> Contact</h5>
+                    <ul>
+                        <li><i class="bi bi-geo-alt-fill"></i> 123 Main St, City</li>
+                        <li><i class="bi bi-telephone-fill"></i> +1 (555) 123-4567</li>
+                        <li><i class="bi bi-envelope-fill"></i> info@carbooking.com</li>
+                        <li><i class="bi bi-clock-fill"></i> Mon - Sun: 24/7</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 Car Booking System. All rights reserved.</p>
+                <p>
+                    <a href="#" style="color: #ffc107; text-decoration: none;">Privacy Policy</a> | 
+                    <a href="#" style="color: #ffc107; text-decoration: none;">Terms of Service</a> | 
+                    <a href="#" style="color: #ffc107; text-decoration: none;">Cookie Policy</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script>
+        // Global cart functionality with localStorage persistence
+        let shoppingCart = [];
+        if (typeof loadCars === 'undefined') { window.loadCars = function(){} }
+        if (typeof loadAllCars === 'undefined') { window.loadAllCars = function(){} }
+        if (typeof setupFilters === 'undefined') { window.setupFilters = function(){} }
+        if (typeof handleSearch === 'undefined') { window.handleSearch = function(){} }
+        if (typeof handleSort === 'undefined') { window.handleSort = function(){} }
+        if (typeof loadMyBookings === 'undefined') { window.loadMyBookings = function(){} }
+
+        // Save cart to localStorage
+        function saveCartToStorage() {
+            try {
+                // Ensure all IDs are numbers before saving
+                const cartToSave = shoppingCart.map(item => ({
+                    ...item,
+                    id: Number(item.id)
+                }));
+                localStorage.setItem('carBookingCart', JSON.stringify(cartToSave));
+                // Debug: Log what's being saved
+                console.log('Saving cart to localStorage:', cartToSave);
+                
+                // Additional debug: Check each item's image
+                cartToSave.forEach((item, index) => {
+                    console.log(`Item ${index} (ID: ${item.id}) image:`, item.image);
+                });
+            } catch (e) {
+                console.error('Error saving cart to localStorage:', e);
+            }
+        }
+
+        // Load cart from localStorage on page load
+        function loadCartFromStorage() {
+            try {
+                const storedCart = localStorage.getItem('carBookingCart');
+                console.log('Raw cart data from localStorage:', storedCart);
+                if (storedCart) {
+                    const parsedCart = JSON.parse(storedCart);
+                    console.log('Parsed cart data:', parsedCart);
+                    // Ensure all IDs are numbers
+                    shoppingCart = parsedCart.map(item => ({
+                        ...item,
+                        id: Number(item.id)
+                    }));
+                    // Debug: Log loaded cart data
+                    console.log('Loaded cart from localStorage:', shoppingCart);
+                    
+                    // Additional debug: Check each loaded item's image
+                    shoppingCart.forEach((item, index) => {
+                        console.log(`Loaded item ${index} (ID: ${item.id}) image:`, item.image);
+                    });
+                } else {
+                    console.log('No cart data found in localStorage');
+                }
+            } catch (e) {
+                console.error('Error loading cart from localStorage:', e);
+                shoppingCart = [];
+            }
+        }
+
+        // Add to cart function (to be called from pages)
+        function addToCart(carId, carName, carType, carImage, pricePerKm) {
+            // Convert carId to number for consistent comparison
+            const numericCarId = Number(carId);
+            
+            // Convert pricePerKm to number
+            const numericPricePerKm = Number(pricePerKm) || 0;
+            
+            // Debug: Log the parameters with more detail
+            console.log('addToCart called with:');
+            console.log('- carId:', carId, '(type:', typeof carId, ')');
+            console.log('- carName:', carName);
+            console.log('- carType:', carType);
+            console.log('- carImage:', carImage, '(type:', typeof carImage, ')');
+            console.log('- pricePerKm:', pricePerKm, '(type:', typeof pricePerKm, ')');
+            console.log('- numericCarId:', numericCarId);
+            console.log('- numericPricePerKm:', numericPricePerKm);
+            
+            // Check if car is already in cart
+            const existingItem = shoppingCart.find(item => item.id === numericCarId);
+            if (existingItem) {
+                alert('This car is already in your cart!');
+                return;
+            }
+            
+            // Add car to cart
+            const cartItem = {
+                id: numericCarId,
+                name: carName,
+                type: carType,
+                image: carImage || '/media/cars/download.jpg',  // Use default if no image
+                price_per_km: numericPricePerKm
+            };
+            
+            // Debug: Log the item being added
+            console.log('Adding cart item:', cartItem);
+            console.log('Cart item image:', cartItem.image);
+            console.log('Cart item price_per_km:', cartItem.price_per_km);
+            
+            shoppingCart.push(cartItem);
+            
+            // Debug: Log the cart contents
+            console.log('Cart contents after adding item:', shoppingCart);
+            
+            // Save to localStorage and update cart summary
+            saveCartToStorage();
+            updateCartSummary();
+            
+            // Show confirmation
+            alert(`${carName} has been added to your cart!`);
+        }
+
+        // Remove item from cart
+        function removeFromCart(carId) {
+            // Convert carId to number for consistent comparison
+            const numericCarId = Number(carId);
+            
+            // Remove from global cart array
+            shoppingCart = shoppingCart.filter(item => item.id !== numericCarId);
+            
+            // Save to localStorage and update cart summary
+            saveCartToStorage();
+            updateCartSummary();
+            
+            // If we're on the cart page, reload the cart items
+            if (window.location.pathname === '/cart/') {
+                loadCartItems();
+            }
+        }
+        
+        // Clear entire cart
+        function clearCart() {
+            if (shoppingCart.length === 0) {
+                alert('Your cart is already empty!');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear your entire cart?')) {
+                shoppingCart = [];
+                saveCartToStorage();
+                updateCartSummary();
+                
+                // If we're on the cart page, reload the cart items
+                if (window.location.pathname === '/cart/') {
+                    loadCartItems();
+                }
+                
+                alert('Your cart has been cleared.');
+            }
+        }
+        
+        // Update cart summary in header
+        function updateCartSummary() {
+            const cartCount = shoppingCart.length;
+            const headerCartCount = document.getElementById('header-cart-count');
+            if (headerCartCount) {
+                headerCartCount.textContent = cartCount;
+            }
+            
+            // Also update page-specific cart count if it exists
+            const pageCartCount = document.getElementById('cart-count');
+            if (pageCartCount) {
+                pageCartCount.textContent = cartCount;
+            }
+        }
+        
+        // Highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load cart from localStorage
+            loadCartFromStorage();
+            
+            // Update cart summary
+            updateCartSummary();
+            
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Check if we're on the home page
+            if (document.getElementById('car-list')) {
+                loadCars();
+            }
+            
+            // Check if we're on the car listing page
+            if (document.getElementById('car-listings')) {
+                loadAllCars();
+                setupFilters();
+            }
+            
+            // Check if we're on the car detail page
+            if (document.getElementById('car-details')) {
+                // Extract car ID from the URL path
+                const pathParts = window.location.pathname.split('/');
+                const carId = pathParts[2]; // Get the car ID from the URL (index 2 for /car/1/)
+                if (carId && !isNaN(carId)) {
+                    loadCarDetails(carId);
+                }
+            }
+            
+            // Check if we're on the register page
+            if (document.getElementById('register-form')) {
+                document.getElementById('register-form').addEventListener('submit', handleRegister);
+            }
+            
+            // Check if we're on the booking page
+            if (document.getElementById('booking-form')) {
+                // Load cart items in booking form
+                if (typeof displayCartItemsInBookingForm === 'function') {
+                    displayCartItemsInBookingForm();
+                }
+            }
+            
+            // Check if we're on the my bookings page
+            if (document.getElementById('bookings-list')) {
+                loadMyBookings();
+            }
+            
+            // Setup search functionality
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearch);
+            }
+            
+            // Setup sort functionality
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', handleSort);
+            }
+            
+            // Dispatch a custom event to notify that cart is loaded
+            document.dispatchEvent(new CustomEvent('cartLoaded'));
+        });
+    </script>
+</body>
+</html>

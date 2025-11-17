@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="bi bi-cart-check me-2"></i>Shopping Cart
+            </h1>
+            <p class="text-center text-muted lead">Review and manage your selected cars</p>
+        </div>
+    </div>
+    
+    <!-- Cart Content -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div id="cart-items-container">
+                        <!-- Cart items will be loaded here via JavaScript -->
+                        <div class="text-center py-5">
+                            <i class="bi bi-cart-x" style="font-size: 4rem; color: #ccc;"></i>
+                            <h3 class="mt-3">Loading cart...</h3>
+                            <p class="text-muted">Please wait while we load your cart items</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Cart Summary -->
+                    <div id="cart-summary" class="mt-4 pt-4 border-top" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h4>Cart Summary</h4>
+                                <p class="text-muted">Review your selected cars before proceeding</p>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" onclick="clearCart()">
+                                        <i class="bi bi-trash me-1"></i>Clear Cart
+                                    </button>
+                                    <button class="btn btn-success btn-lg" onclick="proceedToCheckout()">
+                                        <i class="bi bi-cash me-1"></i>Proceed to Booking
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load cart items when cart is ready
+document.addEventListener('cartLoaded', function() {
+    loadCartItems();
+});
+
+// Fallback: Load cart items after DOM is loaded if cartLoaded event doesn't fire
+document.addEventListener('DOMContentLoaded', function() {
+    // Small delay to ensure cart data is loaded
+    setTimeout(function() {
+        if (document.getElementById('cart-items-container')) {
+            loadCartItems();
+        }
+    }, 100);
+});
+
+// Load and display cart items
+function loadCartItems() {
+    const container = document.getElementById('cart-items-container');
+    const summary = document.getElementById('cart-summary');
+    
+    if (!container) return;
+    
+    // Debug: Log current cart data
+    console.log('Loading cart items, current cart:', shoppingCart);
+    
+    // Get cart from global variable (defined in base template)
+    if (typeof shoppingCart === 'undefined' || shoppingCart.length === 0) {
+        // Show empty cart message
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-cart-x" style="font-size: 4rem; color: #ccc;"></i>
+                <h3 class="mt-3">Your cart is empty</h3>
+                <p class="text-muted">Add some cars to your cart to get started</p>
+                <a href="{% url 'car_list' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-car-front me-1"></i>Browse Cars
+                </a>
+            </div>
+        `;
+        if (summary) summary.style.display = 'none';
+        return;
+    }
+    
+    // Create a deep copy of the shoppingCart array to avoid reference issues
+    const cartItems = [...shoppingCart];
+    
+    // Initialize cartHtml variable
+    let cartHtml = `
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Car</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    // Process each cart item with proper scoping
+    for (let i = 0; i < cartItems.length; i++) {
+        const item = cartItems[i];
+        // Debug: Log each item being processed
+        console.log('Processing cart item:', item);
+        console.log('Item index:', i);
+        
+        // Debug: Check image property specifically
+        console.log('Item image property:', item.image);
+        console.log('Item image type:', typeof item.image);
+        console.log('Item image truthiness:', !!item.image);
+        
+        // Create image HTML with explicit error handling
+        let imageHtml = '';
+        if (item.image && item.image.trim() !== '') {
+            imageHtml = `<img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='/media/cars/download.jpg';" style="width: 70px; height: 70px; object-fit: cover;" class="rounded me-3">`;
+            console.log('Using actual image for item', i, ':', item.image);
+        } else {
+            imageHtml = `<img src="/media/cars/download.jpg" alt="${item.name}" style="width: 70px; height: 70px; object-fit: cover;" class="rounded me-3">`;
+            console.log('Using default image for item', i);
+        }
+        
+        // Debug: Log the image HTML being generated
+        console.log('Generated image HTML for item', i, ':', imageHtml);
+        
+        cartHtml += `
+            <tr id="cart-item-${item.id}">
+                <td>
+                    <div class="d-flex align-items-center">
+                        ${imageHtml}
+                        <div>
+                            <h6 class="mb-0">${item.name}</h6>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge bg-primary">${item.type}</span>
+                </td>
+                <td>
+                    <span>₹${item.price_per_km} per km</span>
+                </td>
+                <td>
+                    <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart(${item.id})">
+                        <i class="bi bi-trash me-1"></i>Remove
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+    
+    cartHtml += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    container.innerHTML = cartHtml;
+    
+    // Show summary section
+    if (summary) {
+        summary.style.display = 'block';
+    }
+}
+
+// Proceed to checkout
+function proceedToCheckout() {
+    if (shoppingCart.length === 0) {
+        alert('Your cart is empty! Please add some cars first.');
+        return;
+    }
+    
+    // Redirect to booking page
+    window.location.href = '{% url "booking" %}';
+}
+</script>
+
+<script>
+// Modern override: cinematic card layout for cart items
+function loadCartItems() {
+    const container = document.getElementById('cart-items-container');
+    const summary = document.getElementById('cart-summary');
+    if (!container) return;
+    if (typeof shoppingCart === 'undefined' || shoppingCart.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-cart-x" style="font-size: 4rem; color: #ccc;"></i>
+                <h3 class="mt-3">Your cart is empty</h3>
+                <p class="text-muted">Add some cars to your cart to get started</p>
+                <a href="{% url 'car_list' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-car-front me-1"></i>Browse Cars
+                </a>
+            </div>
+        `;
+        if (summary) summary.style.display = 'none';
+        return;
+    }
+    const cartItems = [...shoppingCart];
+    let cartHtml = `<div class="row g-4">`;
+    for (let i = 0; i < cartItems.length; i++) {
+        const item = cartItems[i];
+        const img = (item.image && item.image.trim() !== '') ? item.image : '/media/cars/download.jpg';
+        cartHtml += `
+            <div class="col-md-6 col-lg-4" id="cart-item-${item.id}">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="${img}" alt="${item.name}" class="card-img-top car-image" onerror="this.onerror=null;this.src='/media/cars/download.jpg';"/>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${item.name}</h5>
+                        <p class="text-muted mb-2"><span class="badge bg-primary">${item.type}</span></p>
+                        <div class="car-price mb-3">₹${item.price_per_km} / km</div>
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart(${item.id})"><i class="bi bi-trash me-1"></i>Remove</button>
+                            <a href="/car/${item.id}/" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye me-1"></i>View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    cartHtml += `</div>`;
+    container.innerHTML = cartHtml;
+    if (summary) {
+        summary.style.display = 'block';
+    }
+}
+</script>
+
+<style>
+    .table th {
+        font-weight: 600;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}

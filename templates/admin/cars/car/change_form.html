@@ -1,0 +1,46 @@
+{% extends "admin/change_form.html" %}
+
+{% block admin_change_form_document_ready %}
+    {{ block.super }}
+    <script>
+    (function($) {
+        $(document).ready(function() {
+            // Function to toggle price fields based on car type
+            function togglePriceFields() {
+                var carTypeSelect = $('#id_car_type');
+                if (carTypeSelect.length > 0) {
+                    var selectedOption = $('#id_car_type option:selected');
+                    var carTypeText = selectedOption.text().trim();
+                    
+                    console.log('Car type selected:', carTypeText);
+                    console.log('Car type value:', carTypeSelect.val());
+                    
+                    if (carTypeText === 'Both') {
+                        // Show both AC and Non-AC price fields
+                        $('.field-ac_price_per_km').show();
+                        $('.field-non_ac_price_per_km').show();
+                        // Hide the default price field
+                        $('.field-price_per_km').hide();
+                    } else {
+                        // Show the default price field
+                        $('.field-price_per_km').show();
+                        // Hide both AC and Non-AC price fields
+                        $('.field-ac_price_per_km').hide();
+                        $('.field-non_ac_price_per_km').hide();
+                    }
+                }
+            }
+            
+            // Initial toggle on page load
+            togglePriceFields();
+            
+            // Toggle when car type changes
+            $('#id_car_type').on('change', togglePriceFields);
+            
+            // Also try to trigger on DOM changes in case of dynamic loading
+            setTimeout(togglePriceFields, 500);
+            setTimeout(togglePriceFields, 1500);
+        });
+    })(django.jQuery);
+    </script>
+{% endblock %}

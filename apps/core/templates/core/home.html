@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Car Booking System{% endblock %}
+
+{% block content %}
+<!-- Banner Carousel Section -->
+<section class="banner-section">
+    <div class="banner-carousel">
+        <div class="carousel-slide active">
+            <img src="https://picsum.photos/1200/400?random=1" alt="Premium Cars">
+            <div class="carousel-caption">
+                <h2>Experience Luxury Travel</h2>
+                <p>Choose from our premium fleet of vehicles</p>
+            </div>
+        </div>
+        <div class="carousel-slide">
+            <img src="https://picsum.photos/1200/400?random=2" alt="Affordable Prices">
+            <div class="carousel-caption">
+                <h2>Affordable Prices</h2>
+                <p>Best rates in the market with no hidden charges</p>
+            </div>
+        </div>
+        <div class="carousel-slide">
+            <img src="https://picsum.photos/1200/400?random=3" alt="Professional Drivers">
+            <div class="carousel-caption">
+                <h2>Professional Drivers</h2>
+                <p>Experienced and courteous drivers for your safety</p>
+            </div>
+        </div>
+        <!-- Carousel Navigation Buttons -->
+        <button class="carousel-btn prev-btn" onclick="prevSlide()">&#10094;</button>
+        <button class="carousel-btn next-btn" onclick="nextSlide()">&#10095;</button>
+        
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3">Why Choose Us</h2>
+                <p class="text-muted">
+                    We provide exceptional car booking services with features designed for your comfort and convenience.
+                </p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary bg-gradient rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 72px; height: 72px;">
+                            <i class="bi bi-car-front-fill text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Wide Selection</h5>
+                        <p class="card-text text-muted">Choose from a variety of cars including sedans, SUVs, and luxury vehicles to suit your needs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary bg-gradient rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 72px; height: 72px;">
+                            <i class="bi bi-person-badge text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Experienced Drivers</h5>
+                        <p class="card-text text-muted">All our drivers are professionally trained, licensed, and experienced for your safety.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary bg-gradient rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 72px; height: 72px;">
+                            <i class="bi bi-shield-check text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Safe & Reliable</h5>
+                        <p class="card-text text-muted">We ensure the highest safety standards with regular vehicle maintenance and insurance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3">Car Categories</h2>
+                <p class="text-muted">
+                    Explore our different car categories to find the perfect vehicle for your journey.
+                </p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 category-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-wind text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">AC Cars</h5>
+                        <p class="text-muted">Comfortable air-conditioned vehicles for a pleasant travel experience.</p>
+                        <a href="/cars/type/AC/" class="btn btn-outline-primary btn-sm">View Cars</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 category-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-thermometer-snow text-info" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Non-AC Cars</h5>
+                        <p class="text-muted">Economical non-air-conditioned vehicles for budget-conscious travelers.</p>
+                        <a href="/cars/type/Non-AC/" class="btn btn-outline-primary btn-sm">View Cars</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 category-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-collection text-secondary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">All Cars</h5>
+                        <p class="text-muted">Browse our complete vehicle collection to find your perfect ride.</p>
+                        <a href="/cars/category/" class="btn btn-outline-primary btn-sm">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Cars Section -->
+<section class="featured-cars-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3">Featured Cars</h2>
+                <p class="text-muted">
+                    Check out some of our most popular vehicles available for booking right now.
+                </p>
+            </div>
+        </div>
+        <div id="car-list" class="row g-4">
+            <!-- Cars will be loaded here via JavaScript -->
+        </div>
+        <div class="text-center mt-4">
+            <a href="/cars/" class="btn btn-primary btn-lg px-4 py-2">
+                <i class="bi bi-car-front me-2"></i>View All Cars
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Banner Carousel Section */
+    .banner-section {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+    }
+
+    .banner-carousel {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .carousel-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .carousel-slide.active {
+        opacity: 1;
+    }
+
+    .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .carousel-caption {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        width: 80%;
+        z-index: 5;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 30px;
+        border-radius: 10px;
+    }
+
+    .carousel-caption h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .carousel-caption p {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+    }
+
+    /* Navigation Buttons */
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        font-size: 24px;
+        padding: 16px 12px;
+        cursor: pointer;
+        z-index: 10;
+        transition: background-color 0.3s ease;
+        border-radius: 5px;
+    }
+
+    .carousel-btn:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .prev-btn {
+        left: 20px;
+    }
+
+    .next-btn {
+        right: 20px;
+    }
+
+    .carousel-indicators {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    }
+
+    .indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .indicator.active {
+        background-color: #fff;
+    }
+
+    /* Features Section */
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Categories Section */
+    .category-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .banner-section {
+            height: 400px;
+        }
+        
+        .carousel-caption {
+            width: 90%;
+            padding: 20px;
+        }
+        
+        .carousel-caption h2 {
+            font-size: 1.8rem;
+        }
+        
+        .carousel-caption p {
+            font-size: 1rem;
+        }
+        
+        .carousel-btn {
+            font-size: 18px;
+            padding: 12px 8px;
+        }
+        
+        .prev-btn {
+            left: 10px;
+        }
+        
+        .next-btn {
+            right: 10px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .banner-section {
+            height: 300px;
+        }
+        
+        .carousel-caption h2 {
+            font-size: 1.5rem;
+        }
+        
+        .carousel-caption {
+            padding: 15px;
+        }
+    }
+</style>
+
+<script>
+    // Carousel functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            if (!slides || totalSlides === 0) return;
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (indicators && indicators.length) {
+                indicators.forEach(indicator => indicator.classList.remove('active'));
+            }
+            const boundedIndex = Math.max(0, Math.min(index, totalSlides - 1));
+            slides[boundedIndex].classList.add('active');
+            if (indicators && indicators.length > boundedIndex) {
+                indicators[boundedIndex].classList.add('active');
+            }
+            currentSlide = boundedIndex;
+        }
+
+        // Next slide function
+        window.nextSlide = function() {
+            const nextIndex = (currentSlide + 1) % totalSlides;
+            showSlide(nextIndex);
+        }
+
+        // Previous slide function
+        window.prevSlide = function() {
+            const prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(prevIndex);
+        }
+
+        // Auto slide every 5 seconds
+        setInterval(window.nextSlide, 5000);
+
+        // Indicator click events
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+    });
+</script>
+{% endblock %}
