@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django import forms
+from django.utils.html import format_html
 from .models import Category, Driver, Car, CarModel, CarType
 
 class CarInline(admin.TabularInline):
@@ -26,7 +27,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CarModel)
 class CarModelAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name', 'description', 'image_preview')
     search_fields = ('name',)
     inlines = [CarInline]
     fieldsets = (
@@ -34,6 +35,12 @@ class CarModelAdmin(admin.ModelAdmin):
             'fields': ('name', 'description', 'image')
         }),
     )
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 100px; height: auto;" />', obj.image.url)
+        return "No Image"
+    image_preview.short_description = 'Image Preview'
 
 @admin.register(CarType)
 class CarTypeAdmin(admin.ModelAdmin):
@@ -42,13 +49,19 @@ class CarTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Driver)
 class DriverAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'license_number', 'experience')
+    list_display = ('name', 'phone', 'license_number', 'experience', 'image_preview')
     search_fields = ('name', 'license_number')
     list_filter = ('experience',)
+    
+    def image_preview(self, obj):
+        if obj.profile_photo:
+            return format_html('<img src="{}" style="width: 50px; height: 50px; border-radius: 50%;" />', obj.profile_photo.url)
+        return "No Image"
+    image_preview.short_description = 'Photo'
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
-    list_display = ('name', 'car_model', 'car_type', 'driver', 'price_per_km', 'is_available')
+    list_display = ('name', 'car_model', 'car_type', 'driver', 'price_per_km', 'is_available', 'image_preview')
     list_filter = ('car_model', 'car_type', 'is_available')
     search_fields = ('name', 'driver__name')
     
@@ -63,3 +76,9 @@ class CarAdmin(admin.ModelAdmin):
             'fields': ('car_image', 'is_available')
         }),
     )
+    
+    def image_preview(self, obj):
+        if obj.car_image:
+            return format_html('<img src="{}" style="width: 100px; height: auto;" />', obj.car_image.url)
+        return "No Image"
+    image_preview.short_description = 'Image Preview'
