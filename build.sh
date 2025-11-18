@@ -19,3 +19,6 @@ python manage.py add_more_cars_drivers
 
 # Assign sample images to cars and drivers
 python manage.py add_sample_images
+
+# Create cache table for database caching (if using database cache)
+# python manage.py createcachetable

@@ -118,6 +118,20 @@ elif os.getenv('USE_RENDER_DB', 'False') == 'True':
     )
 
 
+# Caching
+# https://docs.djangoproject.com/en/5.2/topics/cache/
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Cache timeout for API responses (in seconds)
+API_CACHE_TIMEOUT = 60 * 5  # 5 minutes
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
