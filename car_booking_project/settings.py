@@ -91,7 +91,10 @@ WSGI_APPLICATION = 'car_booking_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Use PostgreSQL on Render, SQLite for local development
+# Use the provided PostgreSQL database URL for Render deployment
+import dj_database_url
+
+# Default database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -99,11 +102,17 @@ DATABASES = {
     }
 }
 
-# If DATABASE_URL is set (Render environment), use PostgreSQL
-import dj_database_url
+# If DATABASE_URL is set (Render environment), use PostgreSQL with dj_database_url
 if 'DATABASE_URL' in os.environ:
     DATABASES['default'] = dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+# For local development with the provided Render database
+elif os.getenv('USE_RENDER_DB', 'False') == 'True':
+    DATABASES['default'] = dj_database_url.config(
+        default='postgresql://cars_db_escq_user:YaSH7YPlN35eIyQ0ATcso23iruF2egq5@dpg-d4drn2euk2gs739ar38g-a.oregon-postgres.render.com/cars_db_escq',
         conn_max_age=600,
         conn_health_checks=True,
     )
@@ -150,7 +159,7 @@ AUTHENTICATION_BACKENDS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
